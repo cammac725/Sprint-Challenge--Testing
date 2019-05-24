@@ -40,6 +40,23 @@ describe('games model', () => {
       expect(gamesList[0].genre).toBe('Arcade')
       expect(gamesList[0].id).toBe(1)
     })
+  })
+
+  describe('remove()', async () => {
+
+    beforeEach(async () => {
+      await db('games').truncate()
+    })
+
+    test('should remove the game from the db', async () => {
+      const game = await games.insert({ title: "Galaga", genre: 'Arcade' })
+      const list = await db('games')
+      expect(list).toHaveLength(1)
+
+      await games.remove(game.id)
+      const delGames = await db('games')
+      expect(delGames).not.toHaveLength(1)
+    })
 
   })
 
