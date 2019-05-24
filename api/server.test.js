@@ -28,7 +28,7 @@ describe('server.js', () => {
 
     })
 
-    describe('GET games endpoint', () => {
+    describe('games endpoints', () => {
 
       beforeEach(() => {
         return db('games').truncate()
@@ -41,6 +41,26 @@ describe('server.js', () => {
         expect(res.body).toEqual([])
       })
 
+      test('should return array of games and status 200', async () => {
+        await db('games').insert({ title: 'Pacman', genre: 'Arcade', releaseYear: 1980 })
+        await db('games').insert({ title: 'Tetris', genre: 'Arcade', releaseYear: 1981 })
+
+        const res = await request(server).get('/games')
+        const data = res.body
+
+        expect(res.status).toBe(200)
+        expect(data.length).toEqual(2)
+        expect(data[0].id).toBe(1)
+        expect(data[0].title).toBe('Pacman')
+        expect(data[1].id).toBe(2)
+        expect(data[1].title).toBe('Tetris')
+      })
+
+      test('should return status code 422 if required info missing', async () => {
+        const testInput = { title: 'Pacman', releaseYear: 1980 }
+        const res = await request(server).post('/games').send(testInput)
+        expect(res.status).toBe(422)
+      })
 
     })
 
