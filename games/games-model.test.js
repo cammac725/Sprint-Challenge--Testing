@@ -24,4 +24,24 @@ describe('games model', () => {
 
   })
 
+  describe('getAll()', () => {
+
+    beforeEach(async () => {
+      await db('games').truncate()
+    })
+
+    test('should get all games from the db', async () => {
+      await db('games').insert({ title: 'Pacman', genre: 'Arcade', releaseYear: 1979 })
+
+      const gamesList = await games.getAll()
+
+      expect(gamesList.length).toEqual(1)
+      expect(gamesList[0].title).toBe('Pacman')
+      expect(gamesList[0].genre).toBe('Arcade')
+      expect(gamesList[0].id).toBe(1)
+    })
+
+  })
+
+
 })
